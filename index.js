@@ -60,12 +60,13 @@ app.post("/signup",async function(request,response){
 app.post("/signin",async function(request,response){
     let {email,password} = request.body;
     let userdb = await client.db('SingIn').collection("Users").findOne({email:email});
+    let token = await userdb.token;
     
     if(userdb){
         
         const isSame = await bcrypt.compare(password,userdb.password);
         if(isSame){            
-            response.status(200).send({msg:"logged in",userdb})
+            response.status(200).send({msg:"logged in",token})
         }else{
             response.status(400).send({msg:"invalid credentials"})        
         }      
