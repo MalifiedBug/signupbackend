@@ -7,10 +7,12 @@ import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-d
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {auth} from './middlewares/auth.js'
+import cors from 'cors'
 
 
 dotenv.config();
 const app = express();
+app.use(cors());
 
 app.use(bodyparser.urlencoded({extended:false}));
 app.use(bodyparser.json())
