@@ -23,9 +23,10 @@ const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
 
 async function hashedPassword(password){
-    const salt = 10;
-const myPlaintextPassword = password;
-return bcrypt.hash(myPlaintextPassword, salt)
+   const NO_OF_ROUNDS = 10;
+   const salt = await bcrypt.genSalt(NO_OF_ROUNDS);
+   const hashedPassword = await bcrypt.hash(password,salt);
+   return hashedPassword;
 }
 
 
@@ -59,15 +60,17 @@ app.post("/signup",async function(request,response){
 app.post("/signin",async function(request,response){
     let {email,password} = request.body;
     let userdb = await client.db('SingIn').collection("Users").findOne({email:email});
-    const compare = bcrypt.compare(password,userdb.password)
+    
     if(userdb){
-        if(compare){            
+        
+        const isSame = await bcrypt.compare(password,userdb.password);
+        if(isSame){            
             response.status(200).send({msg:"logged in",userdb})
         }else{
-            response.status(400).send({msg:"invalid credz"})        
+            response.status(400).send({msg:"invalid credentials"})        
         }      
     }else{
-        response.status(400).send({msg:"invalid credz"})        
+        response.status(400).send({msg:"no user found"})        
     }       
 })
 
