@@ -69,6 +69,7 @@ app.post("/signin",async function(request,response){
     if(userdb){
         
         const isSame = await bcrypt.compare(password,userdb.password);
+        
         if(isSame){            
             response.status(200).send({msg:"logged in",token})
         }else{
@@ -79,12 +80,17 @@ app.post("/signin",async function(request,response){
     }       
 })
 
-app.get("/profile",auth,async function(request,response){
-    const{email} = request.body;
-    let userdb = await client.db('SingIn').collection("Users").findOne({email:email});
-    request.header("x-auth-token",userdb.token)
-    let data = await client.db("SingIn").collection("Profile").findOne({email:email})
-    response.send(data);
+app.get("/profile/:email",auth,async function(request,response){
+    try {
+	const email = request.params.email;
+	    let userdb = await client.db('SingIn').collection("Users").findOne({email:email});
+	    // request.header("x-auth-token",userdb.token)
+	    let data = await client.db("SingIn").collection("Profile").findOne({email:email})
+        console.log("data here",data)
+	    response.send(data);
+} catch (error) {
+    console.log(error)	
+}
 })
 
 app.post("/sendmail",async function main(request,response) {
