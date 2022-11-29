@@ -122,7 +122,7 @@ app.post("/sendmail",async function main(request,response) {
                  to: `${email}`, // list of receivers
                  subject: "Reset Password ✔", // Subject line
                  text: "Rest Your Password...", // plain text body
-                 html: `<div><h1>Click the below link to go to password reset page 👉 </h1><a href="http://localhost:3000/reset">click this link to reset password</a></div>`, // html body
+                 html: `<div><h1>Click the below link to go to password reset page 👉 </h1><a href="https://signinsignupreacttailwind.netlify.app/reset">click this link to reset password</a></div>`, // html body
                });
              
                console.log("Message sent: %s", info.messageId);
