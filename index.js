@@ -55,8 +55,7 @@ app.post("/signup",async function(request,response){
         response.status(400).send({msg:"user already present",userdb})
     }else{
         const hashedPass = await hashedPassword(password);
-        var token = jwt.sign({ email: email }, process.env.JWT_SECRET);
-        let result = await client.db('SingIn').collection("Users").insertOne({email:email, password:hashedPass,token:token})
+        let result = await client.db('SingIn').collection("Users").insertOne({email:email, password:hashedPass})
         response.send({msg:"user added", email, result,token})
     }       
 })
@@ -64,13 +63,13 @@ app.post("/signup",async function(request,response){
 app.post("/signin",async function(request,response){
     let {email,password} = request.body;
     let userdb = await client.db('SingIn').collection("Users").findOne({email:email});
-    let token = await userdb.token;
     
     if(userdb){
         
         const isSame = await bcrypt.compare(password,userdb.password);
         
-        if(isSame){            
+        if(isSame){   
+            var token = jwt.sign({ email: email }, process.env.JWT_SECRET);         
             response.status(200).send({msg:"logged in",token})
         }else{
             response.status(400).send({msg:"invalid credentials"})        
@@ -87,7 +86,7 @@ app.get("/profile/:email",auth,async function(request,response){
 	    // request.header("x-auth-token",userdb.token)
 	    let data = await client.db("SingIn").collection("Profile").findOne({email:email})
         console.log("data here",data)
-	    response.send(data);
+	    response.send({data}); 
 } catch (error) {
     console.log(error)	
 }
